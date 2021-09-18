@@ -2,26 +2,8 @@ import React, { useState, useReducer } from 'react';
 import Modal from './Modal';
 import { data } from '../../../data';
 // reducer function
-const reducer = (state, action) => {
-  if(action.type === 'ADD_ITEM')
-  {
-    const newPeoples = [...state.people, action.payload]
-    return {
-      ...state,
-      people: newPeoples,
-      isModalOpen: true,
-      modalContent: 'Item added',
-    }
-  }
+import {reducer} from './reducer'
 
-  if (action.type === "NO_ITEM") {
-    return {
-      ...state,
-      isModalOpen: true,
-      modalContent: "Can not be empty",
-    };
-  }
-}
 const defaultState = {
   people: [],
   isModalOpen: false,
@@ -43,12 +25,16 @@ const Index = () => {
     }
     else
     {
-      dispatch({ type: "NO_ITEM" });
+      dispatch({ type: "NO_VALUE" });
     }
   }
 
+  const closeModal = () => {
+    dispatch({ type: "CLOSE_MODAL"})
+  }
+
   return <>
-  {state.isModalOpen && <Modal modalContent={state.modalContent}/>}
+  {state.isModalOpen && <Modal closeModal={closeModal} modalContent={state.modalContent}/>}
   <form className="form" onSubmit={handleSubmit}>
     <div>
       <input 
@@ -60,8 +46,9 @@ const Index = () => {
     <button type="submit">Add</button>
   </form>
   {state.people.map((person) => {
-    return <div key={person.id}>
+    return <div className="item" key={person.id}>
       <h4>{person.name}</h4>
+      <button onClick={() => dispatch({type: 'REMOVE_ITEM', payload: person.id})}>Remove</button>
     </div>
   })}
   </>;
